@@ -103,23 +103,23 @@ body.teacher-mode .teacher-dashboard-notice{
 <div id="appBox" class="hidden">
 <div class="card no-print"><b>Logged in:</b> <span id="userEmail"></span> | <b>Role:</b> <span id="userRole">loading...</span><button class="red" onclick="logout()" style="float:right;margin-top:0">Logout</button></div>
 <div class="tabs no-print">
-<button class="active role-tab" data-roles="admin,deputy,bursar,principal,teacher" onclick="showTab('dashboard',this)">Dashboard</button>
-<button class="role-tab" data-roles="admin,deputy,bursar,principal,teacher" onclick="showTab('classlists',this)">Class Lists</button>
-<button class="role-tab" data-roles="admin,deputy,bursar,principal,teacher" onclick="showTab('students',this)">Students</button>
-<button class="role-tab" data-roles="admin,deputy,bursar" onclick="showTab('payments',this)">Payments & Receipts</button>
-<button class="role-tab" data-roles="admin,deputy,bursar,principal" onclick="showTab('mpesa',this)">M-Pesa</button>
-<button class="role-tab" data-roles="admin,deputy,bursar,principal" onclick="showTab('sms',this)">SMS</button>
-<button class="role-tab" data-roles="admin,deputy,bursar,principal" onclick="showTab('parentportal',this)">Parent Portal</button>
-<button class="role-tab" data-roles="admin,deputy,bursar,principal" onclick="showTab('transactions',this)">Transactions</button>
-<button class="role-tab" data-roles="admin,deputy,bursar,principal" onclick="showTab('cashbook',this)">Cash Book</button>
-<button class="role-tab" data-roles="admin,deputy,bursar,principal" onclick="showTab('defaulters',this)">Defaulters</button>
-<button class="role-tab" data-roles="admin,deputy,bursar,principal" onclick="showTab('inventory',this)">Inventory</button>
-<button class="role-tab" data-roles="admin,deputy,principal,teacher" onclick="showTab('marks',this)">Marks</button>
-<button class="role-tab" data-roles="admin,deputy,principal,teacher" onclick="showTab('attendance',this)">Attendance</button>
-<button class="role-tab" data-roles="admin,deputy,principal,teacher" onclick="showTab('cbc',this)">CBC Report Book</button>
-<button class="role-tab" data-roles="admin,deputy,principal,teacher" onclick="showTab('grade10fullcbc',this)">Grade 10 CBC Full System</button>
-<button class="role-tab" data-roles="admin,deputy,bursar" onclick="showTab('promotion',this)">Promotion</button>
-<button class="role-tab" data-roles="admin" onclick="showTab('branding',this)">Branding</button>
+<button class="active role-tab" data-roles="principal,deputy,curriculum,teacher,admin,bursar" onclick="showTab('dashboard',this)">Dashboard</button>
+<button class="role-tab" data-roles="principal,deputy,curriculum,teacher,admin" onclick="showTab('classlists',this)">Class Lists</button>
+<button class="role-tab" data-roles="principal,deputy,curriculum,teacher,admin" onclick="showTab('students',this)">Students</button>
+<button class="role-tab" data-roles="principal,admin,bursar" onclick="showTab('payments',this)">Payments & Receipts</button>
+<button class="role-tab" data-roles="principal,admin,bursar" onclick="showTab('mpesa',this)">M-Pesa</button>
+<button class="role-tab" data-roles="principal,deputy,curriculum,admin" onclick="showTab('sms',this)">SMS</button>
+<button class="role-tab" data-roles="principal,deputy,curriculum,teacher,admin" onclick="showTab('parentportal',this)">Parent Portal</button>
+<button class="role-tab" data-roles="principal,admin,bursar" onclick="showTab('transactions',this)">Transactions</button>
+<button class="role-tab" data-roles="principal,admin,bursar" onclick="showTab('cashbook',this)">Cash Book</button>
+<button class="role-tab" data-roles="principal,admin,bursar" onclick="showTab('defaulters',this)">Defaulters</button>
+<button class="role-tab" data-roles="principal,admin,bursar" onclick="showTab('inventory',this)">Inventory</button>
+<button class="role-tab" data-roles="principal,deputy,curriculum,teacher,admin" onclick="showTab('marks',this)">Marks</button>
+<button class="role-tab" data-roles="principal,deputy,curriculum,teacher,admin" onclick="showTab('attendance',this)">Attendance</button>
+<button class="role-tab" data-roles="principal,deputy,curriculum,teacher,admin" onclick="showTab('cbc',this)">CBC Report Book</button>
+<button class="role-tab" data-roles="principal,deputy,curriculum,teacher,admin" onclick="showTab('grade10fullcbc',this)">Grade 10 CBC Full System</button>
+<button class="role-tab" data-roles="principal,deputy,curriculum,admin" onclick="showTab('promotion',this)">Promotion</button>
+<button class="role-tab" data-roles="principal,admin" onclick="showTab('branding',this)">Branding</button>
 </div>
 
 <section id="dashboard" class="section active"><div class="teacher-dashboard-notice"><b>Teacher mode active:</b> finance and bursar information is hidden.</div>
@@ -374,7 +374,7 @@ body.teacher-mode .teacher-dashboard-notice{
 <label>Remarks</label><input id="markRemarks">
 <button class="green" data-marks-action onclick="saveMark()">Save Mark</button>
 </div>
-<div class="card"><h2>Marks List</h2><div class="scroll"><table><thead><tr><th>Student</th><th>Year</th><th>Term</th><th>Subject</th><th>Score</th><th>Grade</th><th>Remarks</th></tr></thead><tbody id="marksTable"></tbody></table></div></div>
+<div class="card"><h2>Marks List</h2><div class="scroll"><table><thead><tr><th>Student</th><th>Year</th><th>Term</th><th>Subject</th><th>Score</th><th>Grade</th><th>Remarks</th><th class="no-print">Actions</th></tr></thead><tbody id="marksTable"></tbody></table></div></div>
 </div>
 </section>
 
@@ -1045,7 +1045,52 @@ renderAll();
 const SUPABASE_URL = "https://oqegkrznwkaierkbhkfx.supabase.co";
 const SUPABASE_KEY = "sb_publishable_Aumx4ddhDYsCEdKrKBivgA_b3WYtEHP";
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-let students=[],classLists=[],transactions=[],inventory=[],marks=[],attendance=[],cbcRecords=[],mpesaLogs=[],smsOutbox=[],parentAccess=[],currentUser=null,currentRole='',financeChartObj=null,classChartObj=null;
+let students=[],classLists=[],transactions=[],inventory=[],marks=[],attendance=[],cbcRecords=[],mpesaLogs=[],smsOutbox=[],parentAccess=[],currentUser=null,currentRole='',teacherCode=null,assignedClasses=[],financeChartObj=null,classChartObj=null;
+
+const KINNA_CLASSES = [
+  {class_name:'Form 3', stream:'S', label:'Form 3S', system:'844'},
+  {class_name:'Form 3', stream:'N', label:'Form 3N', system:'844'},
+  {class_name:'Form 4', stream:'Single Stream', label:'Form 4', system:'844'},
+  {class_name:'Grade 10', stream:'S', label:'Grade 10S', system:'CBC'},
+  {class_name:'Grade 10', stream:'N', label:'Grade 10N', system:'CBC'}
+];
+const CLASS_NAMES = [...new Set(KINNA_CLASSES.map(c=>c.class_name))];
+const STREAM_NAMES = [...new Set(KINNA_CLASSES.map(c=>c.stream))];
+function normalizeRole(role, code){
+  const n = String(role||'').trim().toLowerCase();
+  if(Number(code)===1 || n==='principal') return 'principal';
+  if(Number(code)===2 || n==='deputy' || n==='deputy principal') return 'deputy';
+  if(Number(code)===3 || n==='curriculum' || n==='curriculum master') return 'curriculum';
+  if(Number(code)>=4 && Number(code)<=14) return 'teacher';
+  if(['admin','bursar'].includes(n)) return n;
+  return n || 'teacher';
+}
+function roleLabel(){
+  if(teacherCode) return `Code ${teacherCode} - ${currentRole.replace(/\b\w/g, c=>c.toUpperCase())}`;
+  return currentRole;
+}
+function isLeadership(){ return ['principal','deputy','curriculum','admin'].includes(currentRole); }
+function canAccessClass(studentOrClass){
+  if(isLeadership()) return true;
+  if(!assignedClasses || assignedClasses.length===0) return true;
+  const label = typeof studentOrClass === 'string' ? studentOrClass : `${studentOrClass.class_name||''}${(studentOrClass.stream||'').replace('Single Stream','')}`;
+  return assignedClasses.includes(label) || assignedClasses.includes(String(studentOrClass.class_name||''));
+}
+function populateKinnaClassOptions(){
+  const classSelects=['clClass','studentClass','filterClass','clFilterClass'];
+  classSelects.forEach(id=>{ const el=document.getElementById(id); if(!el) return; const first=el.querySelector('option[value=""]')?'<option value="">All Classes</option>':''; el.innerHTML=first+CLASS_NAMES.map(c=>`<option>${c}</option>`).join(''); });
+  const streamSelects=['clStream','studentStream','filterStream','clFilterStream'];
+  streamSelects.forEach(id=>{ const el=document.getElementById(id); if(!el) return; const first=el.querySelector('option[value=""]')?'<option value="">All Streams</option>':''; el.innerHTML=first+STREAM_NAMES.map(s=>`<option>${s}</option>`).join(''); });
+}
+function kinnaSystemForStudent(s){ return (s.class_name==='Form 3' || s.class_name==='Form 4') ? '844' : 'CBC'; }
+function kcseGrade(score){
+  score=Number(score);
+  if(score>=80) return 'A'; if(score>=75) return 'A-'; if(score>=70) return 'B+'; if(score>=65) return 'B'; if(score>=60) return 'B-'; if(score>=55) return 'C+'; if(score>=50) return 'C'; if(score>=45) return 'C-'; if(score>=40) return 'D+'; if(score>=35) return 'D'; if(score>=30) return 'D-'; return 'E';
+}
+function kcsePoints(grade){ return {'A':12,'A-':11,'B+':10,'B':9,'B-':8,'C+':7,'C':6,'C-':5,'D+':4,'D':3,'D-':2,'E':1}[grade]||0; }
+async function logActivity(action, tableName, recordId, details={}){
+  try{ await db.from('activity_logs').insert({user_id:currentUser?.id, teacher_code:teacherCode, action, table_name:tableName, record_id:recordId, details}); }catch(e){ console.warn('Activity log skipped:', e.message); }
+}
 
 function applySchoolLogo(){
   const logo = localStorage.getItem('kinna_school_logo');
@@ -1088,58 +1133,60 @@ async function logout(){await db.auth.signOut();location.reload();}
 async function loadUserRole(){
   const { data, error } = await db
     .from('profiles')
-    .select('role, full_name')
+    .select('role, full_name, teacher_code, assigned_classes')
     .eq('id', currentUser.id)
     .maybeSingle();
 
   if(error){
-    alert('Role read error: ' + error.message + '. Run the role check/fix SQL file.');
+    alert('Role read error: ' + error.message + '. Add teacher_code and assigned_classes columns to profiles if missing.');
     currentRole = 'NO ROLE FOUND';
-  } else if(!data || !data.role){
-    alert('No role found for this login. Go to Supabase > Table Editor > profiles and add this user UUID with role admin, bursar, principal, or teacher.');
+  } else if(!data){
+    alert('No profile found for this login. Add this user in Supabase profiles with teacher_code 1 to 14.');
     currentRole = 'NO ROLE FOUND';
   } else {
-    currentRole = String(data.role).trim().toLowerCase();
+    teacherCode = data.teacher_code ? Number(data.teacher_code) : null;
+    currentRole = normalizeRole(data.role, teacherCode);
+    assignedClasses = Array.isArray(data.assigned_classes) ? data.assigned_classes : [];
   }
 
   const roleEl = document.getElementById('userRole');
-  if(roleEl) roleEl.textContent = currentRole;
-  applyRoleAccess(); applyClassListRoleAccess();
+  if(roleEl) roleEl.textContent = roleLabel();
+  applyRoleAccess(); applyClassListRoleAccess(); populateKinnaClassOptions();
 }
-
 function applyRoleAccess(){
   document.body.classList.toggle('teacher-mode', currentRole === 'teacher');
   document.querySelectorAll('.role-tab').forEach(btn=>{
-    const allowed = (btn.dataset.roles || '').split(',');
+    const allowed = (btn.dataset.roles || '').split(',').map(x=>x.trim());
     btn.style.display = allowed.includes(currentRole) ? 'inline-block' : 'none';
   });
 
-  // show first allowed tab
   const first = Array.from(document.querySelectorAll('.role-tab')).find(b => b.style.display !== 'none');
   if(first) first.click();
-  else alert('No menu available because this user has no valid role in profiles table.');
+  else alert('No menu available because this user has no valid teacher code/role in profiles table.');
 
-  // hide action buttons/forms by role
-  const financeOnly = ['admin','bursar'].includes(currentRole);
-  const marksOnly = ['admin','teacher'].includes(currentRole);
-  const adminOnly = currentRole === 'admin';
+  const financeAllowed = ['principal','admin','bursar'].includes(currentRole);
+  const marksAllowed = ['principal','deputy','curriculum','teacher','admin'].includes(currentRole);
+  const adminAllowed = ['principal','admin'].includes(currentRole);
 
-  document.querySelectorAll('[data-finance-action]').forEach(el=> el.style.display = financeOnly ? '' : 'none');
-  document.querySelectorAll('[data-marks-action]').forEach(el=> el.style.display = marksOnly ? '' : 'none');
-  document.querySelectorAll('[data-admin-action]').forEach(el=> el.style.display = adminOnly ? '' : 'none');
+  document.querySelectorAll('[data-finance-action]').forEach(el=> el.style.display = financeAllowed ? '' : 'none');
+  document.querySelectorAll('[data-marks-action]').forEach(el=> el.style.display = marksAllowed ? '' : 'none');
+  document.querySelectorAll('[data-admin-action]').forEach(el=> el.style.display = adminAllowed ? '' : 'none');
 }
-
 async function loadData(){
-let cl=await db.from('class_lists').select('*').order('academic_year').order('class_name').order('stream').order('full_name'); classLists=cl.data||[];
-let s=await db.from('students').select('*').order('academic_year').order('term').order('class_name').order('stream').order('full_name'); if(s.error) alert(s.error.message); students=s.data||[];
+let cl=await db.from('class_lists').select('*').order('academic_year').order('class_name').order('stream').order('full_name'); classLists=(cl.data||[]).filter(canAccessClass);
+let s=await db.from('students').select('*').order('academic_year').order('term').order('class_name').order('stream').order('full_name'); if(s.error) alert(s.error.message); students=(s.data||[]).filter(canAccessClass);
 let t=await db.from('transactions').select('*').order('transaction_date',{ascending:false}); transactions=t.data||[];
 let i=await db.from('inventory_items').select('*').order('item_name'); inventory=i.data||[];
-let m=await db.from('marks').select('*, students(full_name, admission_no)').order('created_at',{ascending:false}); marks=m.data||[];
+let m=await db.from('marks').select('*, students(full_name, admission_no, class_name, stream)').order('created_at',{ascending:false}); marks=(m.data||[]).filter(x=>!x.students || canAccessClass(x.students));
+let a=await db.from('attendance_summary').select('*'); attendance=(a.data||[]).filter(canAccessClass);
+let c=await db.from('cbc_competency_records').select('*'); cbcRecords=c.data||[];
+let mp=await db.from('mpesa_payments').select('*').order('created_at',{ascending:false}); mpesaLogs=mp.data||[];
+let sms=await db.from('sms_outbox').select('*').order('created_at',{ascending:false}); smsOutbox=sms.data||[];
+let pa=await db.from('parent_portal_access').select('*, students(admission_no, full_name)').order('created_at',{ascending:false}); parentAccess=pa.data||[];
 renderAll();
 }
-
 async function addStudent(){
-let row={admission_no:admNo.value.trim(),full_name:studentName.value.trim(),parent_name:parentName.value.trim(),parent_phone:parentPhone.value.trim(),academic_year:Number(studentYear.value),term:studentTerm.value,class_name:studentClass.value,stream:studentStream.value,sponsor_name:sponsorName.value.trim(),expected_fee:Number(expectedFee.value),paid_amount:0};
+let row={admission_no:admNo.value.trim(),full_name:studentName.value.trim(),parent_name:parentName.value.trim(),parent_phone:parentPhone.value.trim(),academic_year:Number(studentYear.value),term:studentTerm.value,class_name:studentClass.value,stream:studentStream.value,sponsor_name:sponsorName.value.trim(),expected_fee:Number(expectedFee.value),paid_amount:0, curriculum_system:studentClass.value.startsWith('Form')?'844':'CBC', status:'Active'};
 if(!row.admission_no||!row.full_name||!row.expected_fee)return alert('Fill all student details');
 let {error}=await db.from('students').insert(row); if(error)return alert(error.message);
 admNo.value=studentName.value=parentName.value=parentPhone.value=sponsorName.value=expectedFee.value=''; await loadData();
@@ -1170,7 +1217,34 @@ async function promoteStudents(){let fee=Number(newExpectedFee.value); if(!fee)r
 
 async function addItem(){let row={item_name:itemName.value.trim(),category:itemCategory.value.trim(),unit:itemUnit.value.trim()||'pcs',reorder_level:Number(reorderLevel.value||0)}; if(!row.item_name)return alert('Enter item name'); let {error}=await db.from('inventory_items').insert(row); if(error)return alert(error.message); itemName.value=itemCategory.value=itemUnit.value=reorderLevel.value=''; await loadData();}
 async function addMovement(){let row={item_id:movementItem.value,movement_type:movementType.value,quantity:Number(movementQty.value),reference_no:movementRef.value.trim(),notes:movementNotes.value.trim(),entered_by:currentUser.id}; if(!row.item_id||!row.quantity)return alert('Choose item and quantity'); let {error}=await db.from('inventory_movements').insert(row); if(error)return alert(error.message); movementQty.value=movementRef.value=movementNotes.value=''; await loadData();}
-async function saveMark(){let row={student_id:markStudent.value,academic_year:Number(markYear.value),term:markTerm.value,subject:markSubject.value,score:Number(markScore.value),grade:markGrade.value.trim(),remarks:markRemarks.value.trim(),entered_by:currentUser.id}; if(!row.student_id||!row.score)return alert('Choose student and score'); let {error}=await db.from('marks').upsert(row,{onConflict:'student_id,academic_year,term,subject'}); if(error)return alert(error.message); markScore.value=markGrade.value=markRemarks.value=''; await loadData();}
+async function saveMark(){
+  if(!['principal','deputy','curriculum','teacher','admin'].includes(currentRole)) return alert('You are not allowed to edit marks');
+  const st=students.find(s=>s.id===markStudent.value);
+  if(!st) return alert('Choose student');
+  if(!canAccessClass(st)) return alert('You are not assigned to this class');
+  const computedGrade = markGrade.value.trim() || (kinnaSystemForStudent(st)==='844' ? kcseGrade(markScore.value) : '');
+  let row={student_id:markStudent.value,academic_year:Number(markYear.value),term:markTerm.value,subject:markSubject.value,score:Number(markScore.value),grade:computedGrade,remarks:markRemarks.value.trim(),entered_by:currentUser.id,teacher_code:teacherCode,exam_type:'Main Exam'};
+  if(!row.student_id||Number.isNaN(row.score))return alert('Choose student and enter score');
+  let {data,error}=await db.from('marks').upsert(row,{onConflict:'student_id,academic_year,term,subject,exam_type'}).select().single();
+  if(error)return alert(error.message);
+  await logActivity('UPSERT','marks',data?.id,row);
+  markScore.value=markGrade.value=markRemarks.value=''; await loadData();
+}
+async function deleteMark(id){
+  if(!['principal','deputy','curriculum','teacher','admin'].includes(currentRole)) return alert('You are not allowed to delete marks');
+  if(!confirm('Delete this mark?')) return;
+  let {error}=await db.from('marks').delete().eq('id',id);
+  if(error) return alert(error.message);
+  await logActivity('DELETE','marks',id,{});
+  await loadData();
+}
+function editMark(id){
+  const m=marks.find(x=>x.id===id);
+  if(!m) return;
+  showTab('marks', document.querySelector("button[onclick*="marks"]"));
+  markStudent.value=m.student_id; markYear.value=m.academic_year; markTerm.value=m.term; markSubject.value=m.subject; markScore.value=m.score; markGrade.value=m.grade||''; markRemarks.value=m.remarks||'';
+  alert('Mark loaded. Edit the fields and click Save Mark.');
+}
 
 function getFilteredStudents(){let q=(studentSearch?.value||'').toLowerCase(),fy=filterYear?.value||'',ft=filterTerm?.value||'',fc=filterClass?.value||'',fs=filterStream?.value||'';return students.filter(s=>{let text=`${s.academic_year} ${s.term} ${s.class_name} ${s.stream} ${s.admission_no} ${s.full_name} ${s.sponsor_name||''} ${s.parent_phone||''}`.toLowerCase();if(q&&!text.includes(q))return false;if(fy&&String(s.academic_year)!==fy)return false;if(ft&&s.term!==ft)return false;if(fc&&s.class_name!==fc)return false;if(fs&&s.stream!==fs)return false;return true;});}
 
@@ -1232,32 +1306,59 @@ function buildReportBook(){
   const id=reportStudent.value;
   const s=students.find(x=>x.id===id);
   if(!s) return alert('Choose student');
+  const system=kinnaSystemForStudent(s);
   const studentMarks=marks.filter(m=>m.student_id===id || (m.student_id===s.id));
   const studentCBC=cbcRecords.filter(c=>c.student_id===id || (c.student_id===s.id));
   const studentAtt=attendance.find(a=>a.student_id===id);
   const bal=Number(s.expected_fee||0)-Number(s.paid_amount||0);
+  const logo = localStorage.getItem('kinna_school_logo');
+  const logoHtml = logo ? `<img src="${logo}" style="width:95px;height:95px;object-fit:contain;display:block;margin:0 auto 6px">` : '';
 
-  let marksRows=studentMarks.map(m=>`<tr><td>${m.subject}</td><td>${m.score}</td><td>${m.grade||''}</td><td>${m.remarks||''}</td></tr>`).join('');
-  if(!marksRows) marksRows='<tr><td colspan="4">No marks entered yet.</td></tr>';
+  if(system==='844'){
+    let total=0, points=0;
+    const marksRows=studentMarks.map(m=>{ const grade=m.grade||kcseGrade(m.score); total+=Number(m.score||0); points+=kcsePoints(grade); return `<tr><td>${m.subject}</td><td>${m.score}</td><td>${grade}</td><td>${m.remarks||''}</td></tr>`; }).join('') || '<tr><td colspan="4">No marks entered yet.</td></tr>';
+    const mean=studentMarks.length ? (total/studentMarks.length).toFixed(2) : '0.00';
+    const meanGrade=studentMarks.length ? kcseGrade(mean) : '';
+    reportBookContent.innerHTML=`
+      <div style="position:relative;overflow:hidden;border:3px double #064e3b;padding:18px;background:white">
+        ${logo ? `<img src="${logo}" style="position:absolute;inset:0;margin:auto;width:420px;opacity:.06;z-index:0">` : ''}
+        <div style="position:relative;z-index:1">
+          ${logoHtml}<h2 style="text-align:center;color:#064e3b;margin:0">KINNA SECONDARY SCHOOL</h2>
+          <h3 style="text-align:center;margin:4px">8-4-4 STUDENT REPORT BOOK</h3><hr>
+          <p><b>Name:</b> ${s.full_name} &nbsp; <b>Adm:</b> ${s.admission_no}</p>
+          <p><b>Class:</b> ${s.class_name} ${s.stream} &nbsp; <b>Year/Term:</b> ${s.academic_year} ${s.term}</p>
+          <table><thead><tr><th>Subject</th><th>Marks</th><th>Grade</th><th>Teacher Remarks</th></tr></thead><tbody>${marksRows}</tbody></table>
+          <p><b>Total Marks:</b> ${total} &nbsp; <b>Mean Score:</b> ${mean} &nbsp; <b>Mean Grade:</b> ${meanGrade} &nbsp; <b>Points:</b> ${points}</p>
+          <h3>Attendance Summary</h3>
+          <p>Present: ${studentAtt?.present_days||0}, Absent: ${studentAtt?.absent_days||0}, Late: ${studentAtt?.late_days||0}, Total Marked Days: ${studentAtt?.total_marked_days||0}</p>
+          <h3>Fee Summary</h3><p>Expected: ${money(s.expected_fee)}, Paid: ${money(s.paid_amount)}, Balance: ${money(bal)}</p>
+          <br><p><b>Class Teacher Comment:</b> ____________________________________________________</p>
+          <p><b>Principal Comment:</b> ________________________________________________________</p>
+          <br><p><b>Class Teacher:</b> _____________________ &nbsp;&nbsp; <b>Principal:</b> _____________________</p>
+        </div>
+      </div>`;
+    return;
+  }
 
-  let cbcRows=studentCBC.map(c=>`<tr><td>${c.subject}</td><td>${c.strand}</td><td>${c.substrand||''}</td><td>${c.competency_level}</td><td>${c.teacher_remarks||''}</td></tr>`).join('');
-  if(!cbcRows) cbcRows='<tr><td colspan="5">No CBC competency records entered yet.</td></tr>';
-
+  let marksRows=studentMarks.map(m=>`<tr><td>${m.subject}</td><td>${m.score}</td><td>${m.grade||''}</td><td>${m.remarks||''}</td></tr>`).join('') || '<tr><td colspan="4">No marks entered yet.</td></tr>';
+  let cbcRows=studentCBC.map(c=>`<tr><td>${c.subject}</td><td>${c.strand}</td><td>${c.substrand||''}</td><td>${c.competency_level}</td><td>${c.teacher_remarks||''}</td></tr>`).join('') || '<tr><td colspan="5">No CBC competency records entered yet.</td></tr>';
   reportBookContent.innerHTML=`
-    <p><b>Name:</b> ${s.full_name} &nbsp; <b>Adm:</b> ${s.admission_no}</p>
-    <p><b>Class:</b> ${s.class_name} ${s.stream} &nbsp; <b>Year/Term:</b> ${s.academic_year} ${s.term}</p>
-    <p><b>Parent:</b> ${s.parent_name||''} &nbsp; <b>Phone:</b> ${s.parent_phone||''}</p>
-    <h3>Academic Marks</h3>
-    <table><thead><tr><th>Subject</th><th>Score</th><th>Grade</th><th>Remarks</th></tr></thead><tbody>${marksRows}</tbody></table>
-    <h3>CBC Competency Report</h3>
-    <table><thead><tr><th>Subject</th><th>Strand</th><th>Sub-strand</th><th>Level</th><th>Remarks</th></tr></thead><tbody>${cbcRows}</tbody></table>
-    <h3>Attendance Summary</h3>
-    <p>Present: ${studentAtt?.present_days||0}, Absent: ${studentAtt?.absent_days||0}, Late: ${studentAtt?.late_days||0}, Total Marked Days: ${studentAtt?.total_marked_days||0}</p>
-    <h3>Fee Summary</h3>
-    <p>Expected: ${money(s.expected_fee)}, Paid: ${money(s.paid_amount)}, Balance: ${money(bal)}</p>
-    <br><p><b>Class Teacher:</b> _____________________ &nbsp;&nbsp; <b>Principal:</b> _____________________</p>
-  `;
+    <div style="position:relative;overflow:hidden;border:3px double #064e3b;padding:18px;background:white">
+      ${logo ? `<img src="${logo}" style="position:absolute;inset:0;margin:auto;width:420px;opacity:.06;z-index:0">` : ''}
+      <div style="position:relative;z-index:1">
+      ${logoHtml}<h2 style="text-align:center;color:#064e3b;margin:0">KINNA SECONDARY SCHOOL</h2>
+      <h3 style="text-align:center;margin:4px">GRADE 10 CBC STUDENT REPORT BOOK</h3><hr>
+      <p><b>Name:</b> ${s.full_name} &nbsp; <b>Adm:</b> ${s.admission_no}</p>
+      <p><b>Class:</b> ${s.class_name} ${s.stream} &nbsp; <b>Year/Term:</b> ${s.academic_year} ${s.term}</p>
+      <h3>Learning Area Scores</h3><table><thead><tr><th>Learning Area</th><th>Score</th><th>Level</th><th>Remarks</th></tr></thead><tbody>${marksRows}</tbody></table>
+      <h3>CBC Competency Report</h3><table><thead><tr><th>Learning Area</th><th>Strand</th><th>Sub-strand</th><th>Level</th><th>Remarks</th></tr></thead><tbody>${cbcRows}</tbody></table>
+      <h3>Attendance Summary</h3><p>Present: ${studentAtt?.present_days||0}, Absent: ${studentAtt?.absent_days||0}, Late: ${studentAtt?.late_days||0}, Total Marked Days: ${studentAtt?.total_marked_days||0}</p>
+      <h3>Fee Summary</h3><p>Expected: ${money(s.expected_fee)}, Paid: ${money(s.paid_amount)}, Balance: ${money(bal)}</p>
+      <br><p><b>Class Teacher:</b> _____________________ &nbsp;&nbsp; <b>Principal:</b> _____________________</p>
+      </div>
+    </div>`;
 }
+
 
 
 function populateMpesaSMSParentSelects(){
@@ -1379,8 +1480,8 @@ function renderParentAccess(){
 
 
 function applyClassListRoleAccess(){
-  const canAdd = ['admin','deputy','principal','teacher'].includes(currentRole);
-  const canDelete = ['admin','deputy'].includes(currentRole);
+  const canAdd = ['principal','deputy','curriculum','teacher','admin'].includes(currentRole);
+  const canDelete = ['principal','deputy','curriculum','admin'].includes(currentRole);
   document.querySelectorAll('[data-class-add]').forEach(el=>el.style.display=canAdd?'':'none');
   document.querySelectorAll('[data-class-delete]').forEach(el=>el.style.display=canDelete?'':'none');
 }
@@ -1408,7 +1509,7 @@ async function addClassListStudent(){
 }
 
 async function deleteClassListStudent(id){
-  if(!['admin','deputy'].includes(currentRole)) return alert('Only deputy or admin can delete class list records');
+  if(!['principal','deputy','curriculum','admin'].includes(currentRole)) return alert('Only principal, deputy or curriculum master can delete class list records');
   if(!confirm('Delete this class list record?')) return;
   let {error}=await db.from('class_lists').delete().eq('id',id);
   if(error) return alert(error.message);
@@ -1447,8 +1548,8 @@ function renderClassLists(){
       el.innerHTML+=`<tr class="group-row"><td colspan="10">${group}</td></tr>`;
       last=group;
     }
-    const deleteBtn=['admin','deputy'].includes(currentRole)?`<button class="red" data-class-delete onclick="deleteClassListStudent('${s.id}')">Delete</button>`:'';
-    const importBtn=['admin','deputy','bursar'].includes(currentRole)?`<button class="blue" onclick="importClassListToFinance('${s.id}')">Import to Finance</button>`:'';
+    const deleteBtn=['principal','deputy','curriculum','admin'].includes(currentRole)?`<button class="red" data-class-delete onclick="deleteClassListStudent('${s.id}')">Delete</button>`:'';
+    const importBtn=['principal','admin','bursar'].includes(currentRole)?`<button class="blue" onclick="importClassListToFinance('${s.id}')">Import to Finance</button>`:'';
     el.innerHTML+=`<tr><td>${s.academic_year}</td><td>${s.class_name}</td><td>${s.stream}</td><td>${s.admission_no}</td><td>${s.full_name}</td><td>${s.gender||''}</td><td>${s.class_teacher||''}</td><td>${s.parent_phone||''}</td><td>${s.status}</td><td class="no-print">${importBtn} ${deleteBtn}</td></tr>`;
   });
   applyClassListRoleAccess();
@@ -1458,11 +1559,15 @@ function renderStudents(){studentTable.innerHTML='';payStudent.innerHTML='<optio
 function renderTransactions(){txTable.innerHTML='';cashbookTable.innerHTML='';let cash=0,bank=0;transactions.forEach(t=>{txTable.innerHTML+=`<tr><td>${t.transaction_date}</td><td>${t.description}</td><td>${t.transaction_type}</td><td>${t.mode}</td><td>${t.account_name}</td><td>${t.reference_no||''}</td><td class="right">${money(t.amount)}</td></tr>`;let ci='',co='',bi='',bo='';if(t.transaction_type==='Income'&&t.mode==='Cash'){ci=money(t.amount);cash+=Number(t.amount)}if(t.transaction_type==='Expense'&&t.mode==='Cash'){co=money(t.amount);cash-=Number(t.amount)}if(t.transaction_type==='Income'&&t.mode==='Bank'){bi=money(t.amount);bank+=Number(t.amount)}if(t.transaction_type==='Expense'&&t.mode==='Bank'){bo=money(t.amount);bank-=Number(t.amount)}cashbookTable.innerHTML+=`<tr><td>${t.transaction_date}</td><td>${t.description}</td><td>${t.reference_no||''}</td><td class="right">${ci}</td><td class="right">${co}</td><td class="right">${bi}</td><td class="right">${bo}</td></tr>`;});cashBal.textContent=money(cash);bankBal.textContent=money(bank);}
 function renderDefaulters(){defaultersTable.innerHTML='';students.filter(s=>Number(s.expected_fee)-Number(s.paid_amount)>0).forEach(s=>{let bal=Number(s.expected_fee)-Number(s.paid_amount);defaultersTable.innerHTML+=`<tr><td>${s.admission_no}</td><td>${s.full_name}</td><td>${s.class_name} ${s.stream}</td><td>${s.academic_year} ${s.term}</td><td>${s.parent_phone||''}</td><td>${s.sponsor_name||''}</td><td class="right">${money(bal)}</td></tr>`;});}
 function renderInventory(){inventoryTable.innerHTML='';movementItem.innerHTML='<option value="">-- Select Item --</option>';inventory.forEach(i=>{movementItem.innerHTML+=`<option value="${i.id}">${i.item_name}</option>`;let status=Number(i.quantity)<=Number(i.reorder_level)?'<span class="bad">Low Stock</span>':'<span class="ok">OK</span>';inventoryTable.innerHTML+=`<tr><td>${i.item_name}</td><td>${i.category||''}</td><td>${i.unit||''}</td><td class="right">${i.quantity}</td><td class="right">${i.reorder_level}</td><td>${status}</td></tr>`;});}
-function renderMarks(){marksTable.innerHTML='';marks.forEach(m=>{marksTable.innerHTML+=`<tr><td>${m.students?.full_name||''}</td><td>${m.academic_year}</td><td>${m.term}</td><td>${m.subject}</td><td>${m.score}</td><td>${m.grade||''}</td><td>${m.remarks||''}</td></tr>`;});}
+function renderMarks(){marksTable.innerHTML='';marks.forEach(m=>{
+  const actions=['principal','deputy','curriculum','teacher','admin'].includes(currentRole)?`<button class="blue" onclick="editMark('${m.id}')">Edit</button> <button class="red" onclick="deleteMark('${m.id}')">Delete</button>`:'';
+  marksTable.innerHTML+=`<tr><td>${m.students?.full_name||''}</td><td>${m.academic_year}</td><td>${m.term}</td><td>${m.subject}</td><td>${m.score}</td><td>${m.grade||''}</td><td>${m.remarks||''}</td><td class="no-print">${actions}</td></tr>`;
+});}
 function renderDashboard(){let expected=0,paid=0;students.forEach(s=>{expected+=Number(s.expected_fee||0);paid+=Number(s.paid_amount||0);});totalStudents.textContent=students.length;totalExpected.textContent=money(expected);totalPaid.textContent=money(paid);totalBalance.textContent=money(expected-paid);renderCharts();}
 function renderCharts(){let income=0,expense=0;transactions.forEach(t=>{if(t.transaction_type==='Income')income+=Number(t.amount);else expense+=Number(t.amount);});if(financeChartObj)financeChartObj.destroy();financeChartObj=new Chart(financeChart,{type:'bar',data:{labels:['Income','Expenses'],datasets:[{label:'Amount',data:[income,expense]}]}});let classMap={};students.forEach(s=>{classMap[s.class_name]=(classMap[s.class_name]||0)+(Number(s.expected_fee)-Number(s.paid_amount));});if(classChartObj)classChartObj.destroy();classChartObj=new Chart(classChart,{type:'bar',data:{labels:Object.keys(classMap),datasets:[{label:'Balance',data:Object.values(classMap)}]}});}
 function renderAll(){renderClassLists();renderStudents();renderTransactions();renderDefaulters();renderInventory();renderMarks();renderAttendance();renderCBC(); populateMpesaSMSParentSelects();renderDashboard();}
 applySchoolLogo();
+populateKinnaClassOptions();
 checkSession();
 </script>
 </body>
